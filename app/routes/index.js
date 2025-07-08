@@ -12,11 +12,11 @@ module.exports = fp(
     appInstance.get("/user", {}, async function (request, replay) {
       const data = [
         {
-          nama: "adhinath",
+          name: "adhinath",
           email: "adhinath@example.com",
         },
         {
-          nama: "raiga",
+          name: "raiga",
           email: "raiga@example.com",
         },
       ];
@@ -32,14 +32,68 @@ module.exports = fp(
 
     // POST: /users
     appInstance.post("/user", {}, async function (request, replay) {
-      const user = request.body;
-      // const user = {};
+      const { name, email } = request.body;
+      const user = { name, email };
       return replay.code(201).send({
         status: "CREATED",
         statusCode: 201,
         message: "Data berahasil dibuat",
         payload: {
           user,
+        },
+      });
+    });
+
+    // GET: /users/user_id
+    appInstance.get("/user/:userId", {}, async function (request, replay) {
+      const params = request.params;
+      const user = [
+        {
+          id: params.userId,
+          name: "adhinath",
+          email: "adhinath@example.com",
+        },
+      ];
+      return replay.code(201).send({
+        status: "LOADED",
+        statusCode: 201,
+        message: "Data berahasil dimuat",
+        payload: {
+          user,
+        },
+      });
+    });
+
+    // PUT: /users/userId
+    appInstance.put("/user/:userId", {}, async function (request, replay) {
+      const params = request.params;
+      const { name, email } = request.body;
+      const user = [
+        {
+          id: params.userId,
+          name,
+          email,
+        },
+      ];
+      return replay.code(200).send({
+        status: "UPDATED",
+        statusCode: 200,
+        message: "Data berahasil diperbarui",
+        payload: {
+          user,
+        },
+      });
+    });
+
+    // Delete: /users/user_id
+    appInstance.delete("/user/:userId", {}, async function (request, replay) {
+      const params = request.params;
+      return replay.code(200).send({
+        status: "DELETED",
+        statusCode: 200,
+        message: "Data berahasil dihapus",
+        payload: {
+          params,
         },
       });
     });
