@@ -11,14 +11,15 @@ module.exports = fp(
       };
     });
 
-    // GET: /users
+    // GET: /users list
     appInstance.get("/user", {}, async function (request, reply) {
-      const data = await userService.getList();
+      const data = await userService.getList(request.query);
       return reply.code(200).send({
         status: "LOADED",
         statusCode: 200,
         message: "Data berahasil dimuat",
         payload: {
+          query: request.query,
           data,
         },
       });

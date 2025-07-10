@@ -1,12 +1,12 @@
 module.exports = function (appInstance) {
   const { db } = appInstance;
 
-  async function getList() {
-    try {
-      return await tableName().select("*");
-    } catch (error) {
-      throwError(error);
-    }
+  async function getList(qs) {
+    return await paginate({
+      page: parseInt(qs.page) || 1,
+      perPage: parseInt(qs.perPage) || 10,
+      q: qs.q ? String(qs.q).trim() : null,
+    });
   }
 
   async function create({ name, email }) {
@@ -49,6 +49,36 @@ module.exports = function (appInstance) {
         throwError("Data Tidak Ditemukan");
       }
       return await tableName().where({ id: userId }).del();
+    } catch (error) {
+      throwError(error);
+    }
+  }
+
+  async function paginate({ page, perPage, q }) {
+    try {
+      const qWhere = (query) => {
+        if (q) {
+          const val = `%${q}%`;
+          query.whereILike("name", val).orWhereILike("email", val);
+        }
+      };
+      const { total } = await tableName().where(qWhere).count("id as total").first();
+
+      const currentPage = Math.min(page, perPage);
+      const offset = (currentPage - 1) * perPage;
+      const lastPage = Math.ceil(total / perPage);
+
+      const data = await tableName().where(qWhere).select("*").limit(perPage).offset(offset);
+
+      return {
+        data,
+        total,
+        page,
+        perPage,
+        q,
+        lastPage,
+        firstPage: 1,
+      };
     } catch (error) {
       throwError(error);
     }
