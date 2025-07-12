@@ -8,17 +8,21 @@ const dbPlugin = require("./plugins/knex");
 
 const responseJSON = require("./cores/decorators/responseJSON");
 
+const { notFoundHandler, errorHandler } = require("./errors");
+
 const app = Fastify({
   ignoreTrailingSlash,
   logger,
 });
 
-// Register plugin
+// ErrorHandler
+app.setErrorHandler(errorHandler);
+// ErrorHandler
+app.setNotFoundHandler(notFoundHandler);
+// Register responseJSON
 app.register(responseJSON);
-
 // Register plugin
 app.register(dbPlugin);
-
 // Register routes
 app.register(routes);
 

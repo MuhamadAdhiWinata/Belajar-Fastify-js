@@ -1,3 +1,5 @@
+const { DataNotFoundError } = require("../errors");
+
 module.exports = function (appInstance) {
   const { db } = appInstance;
 
@@ -27,7 +29,7 @@ module.exports = function (appInstance) {
       const userExist = await findById(userId);
 
       if (!userExist) {
-        throwError("Data Tidak Ditemukan");
+        throw new DataNotFoundError();
       }
       const result = await tableName().update({ name, email, updated_at: db.fn.now() }).where({
         id: userId,
@@ -46,7 +48,7 @@ module.exports = function (appInstance) {
       const userExist = await findById(userId);
 
       if (!userExist) {
-        throwError("Data Tidak Ditemukan");
+        throw new DataNotFoundError();
       }
       return await tableName().where({ id: userId }).del();
     } catch (error) {
@@ -97,6 +99,9 @@ module.exports = function (appInstance) {
   }
 
   function throwError(error) {
+    if (error instanceof DataNotFoundError) {
+      throw error;
+    }
     throw Error(error);
   }
 
