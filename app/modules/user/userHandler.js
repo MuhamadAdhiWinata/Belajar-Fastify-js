@@ -5,40 +5,25 @@ module.exports = function (appInstance) {
 
   async function getList(request, reply) {
     const user = await userService.getList(request.query);
-    return reply.code(200).send({
-      status: "LOADED",
-      statusCode: 200,
-      message: "Data berahasil dimuat",
-      payload: {
-        query: request.query,
-        ...user,
-      },
+    return reply.responseJSON("LOADED", 200, "Data Berhasil Dimuat!", {
+      query: request.query,
+      ...user,
     });
   }
 
   async function create(request, reply) {
     const user = await userService.create(request.body);
-    return reply.code(201).send({
-      status: "CREATED",
-      statusCode: 201,
-      message: "Data berahasil dibuat",
-      payload: {
-        user,
-      },
+    return reply.responseJSON("CREATED", 200, "Data Berhasil Dibuat!", {
+      user,
     });
   }
 
   async function show(request, reply) {
     const params = request.params;
     const user = await userService.show({ id: params.userId });
-    return reply.code(200).send({
-      status: "LOADED",
-      statusCode: 200,
-      message: "Data berahasil dimuat",
-      payload: {
-        params,
-        user: user ? user : {},
-      },
+    return reply.responseJSON("LOADED", 200, "Data Berhasil Dimuat!", {
+      params,
+      user: user ? user : {},
     });
   }
 
@@ -46,14 +31,9 @@ module.exports = function (appInstance) {
     const params = request.params;
     const { userId } = params;
     const user = await userService.update(request.body, userId);
-    return reply.code(200).send({
-      status: "UPDATED",
-      statusCode: 200,
-      message: "Data berhasil diperbarui",
-      payload: {
-        params,
-        user,
-      },
+    return reply.responseJSON("UPDATED", 200, "Data Berhasil Diperbarui!", {
+      params,
+      user,
     });
   }
 
@@ -63,13 +43,8 @@ module.exports = function (appInstance) {
 
     await userService.destroy(userId);
 
-    return reply.code(200).send({
-      status: "DELETED",
-      statusCode: 200,
-      message: "Data berhasil dihapus",
-      payload: {
-        userId,
-      },
+    return reply.responseJSON("DELETED", 200, "Data Berhasil Dihapus!", {
+      userId,
     });
   }
 
